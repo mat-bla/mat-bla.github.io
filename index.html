@@ -5,17 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Closed today. No goon for us.</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      background-color: #f0f0f0;
-      color: #2c2c2c;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      height: 100vh;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
+      text-align: center;
+      color: #2c2c2c;
     }
 
     h1 {
@@ -29,65 +43,108 @@
       animation: blink 3s infinite;
     }
 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-
-    .mugs {
+    .glasses {
       position: relative;
-      width: 150px;
-      height: 100px;
+      width: 200px;
+      height: 120px;
     }
 
-    .mug {
-      width: 60px;
-      height: 80px;
-      border: 5px solid #888;
-      border-radius: 8px 8px 12px 12px;
+    .glass {
+      width: 50px;
+      height: 100px;
+      border: 4px solid #aaa;
+      border-radius: 5px 5px 10px 10px;
       position: absolute;
       bottom: 0;
-      background-color: #ddd;
-      overflow: hidden;
-      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.3);
       animation: tilt 2s ease-in-out infinite;
     }
 
-    .mug::before {
-      content: "";
-      position: absolute;
-      top: 20%;
-      right: -15px;
-      width: 15px;
-      height: 30px;
-      border: 5px solid #888;
-      border-radius: 50%;
-      background-color: transparent;
-    }
-
-    .mug.left {
+    .glass.left {
       left: 0;
       animation-delay: 0s;
     }
 
-    .mug.right {
+    .glass.right {
       right: 0;
       animation-delay: 1s;
     }
 
     @keyframes tilt {
       0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(-5deg); }
+      50% { transform: rotate(-6deg); }
     }
 
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
   </style>
 </head>
 <body>
-  <h1>Closed</h1>
-  <div class="sad-face">😞</div>
-  <div class="mugs">
-    <div class="mug left"></div>
-    <div class="mug right"></div>
+  <canvas id="background"></canvas>
+  <div class="content">
+    <h1>Closed</h1>
+    <div class="sad-face">😞</div>
+    <div class="glasses">
+      <div class="glass left"></div>
+      <div class="glass right"></div>
+    </div>
   </div>
+
+  <script>
+    const canvas = document.getElementById('background');
+    const ctx = canvas.getContext('2d');
+    let circles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      circles = [];
+
+      for (let i = 0; i < 100; i++) {
+        circles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: 20 + Math.random() * 40,
+          dx: (Math.random() - 0.5) * 0.5,
+          dy: (Math.random() - 0.5) * 0.5,
+          color: Math.random() < 0.2
+            ? 'rgba(255, 192, 203, 0.4)'
+            : `hsl(${170 + Math.random() * 30}, 70%, ${70 + Math.random() * 10}%)`
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let c of circles) {
+        c.x += c.dx;
+        c.y += c.dy;
+
+        if (c.x < -c.r) c.x = canvas.width + c.r;
+        if (c.x > canvas.width + c.r) c.x = -c.r;
+        if (c.y < -c.r) c.y = canvas.height + c.r;
+        if (c.y > canvas.height + c.r) c.y = -c.r;
+
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fillStyle = c.color;
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+    });
+
+    resizeCanvas();
+    animate();
+  </script>
 </body>
 </html>
+
