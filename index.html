@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>No</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #f0f0f0;
+      color: #2c2c2c;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .sad-face {
+      font-size: 4rem;
+      margin-bottom: 2rem;
+      animation: blink 3s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .mugs {
+      position: relative;
+      width: 150px;
+      height: 100px;
+    }
+
+    .mug {
+      width: 60px;
+      height: 80px;
+      border: 5px solid #888;
+      border-radius: 8px 8px 12px 12px;
+      position: absolute;
+      bottom: 0;
+      background-color: #ddd;
+      overflow: hidden;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+      animation: tilt 2s ease-in-out infinite;
+    }
+
+    .mug::before {
+      content: "";
+      position: absolute;
+      top: 20%;
+      right: -15px;
+      width: 15px;
+      height: 30px;
+      border: 5px solid #888;
+      border-radius: 50%;
+      background-color: transparent;
+    }
+
+    .mug.left {
+      left: 0;
+      animation-delay: 0s;
+    }
+
+    .mug.right {
+      right: 0;
+      animation-delay: 1s;
+    }
+
+    @keyframes tilt {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-5deg); }
+    }
+
+  </style>
+</head>
+<body>
+  <h1>No</h1>
+  <div class="sad-face">😞</div>
+  <div class="mugs">
+    <div class="mug left"></div>
+    <div class="mug right"></div>
+  </div>
+</body>
+</html>
