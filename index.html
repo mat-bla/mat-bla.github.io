@@ -1,79 +1,158 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Yes</title>
+  <title>No</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      background-color: #fffef0;
-      color: #3d2b1f;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      height: 100vh;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    body {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
+      color: #fff;
+      background: #000;
     }
+
     h1 {
-      font-size: 4rem;
-      margin-bottom: 2rem;
+      font-size: 6rem;
+      color: #ffffff;
+      text-shadow: 3px 3px 10px #ff00cc, -3px -3px 10px #00ffff;
+      animation: pulse 1.5s infinite alternate ease-in-out;
+      z-index: 1;
     }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+
     .mugs {
       position: relative;
-      width: 120px;
-      height: 100px;
+      width: 200px;
+      height: 140px;
+      margin-top: 2rem;
+      z-index: 1;
     }
+
     .mug {
-      width: 50px;
-      height: 80px;
-      border: 4px solid #5c4033;
-      border-radius: 8px;
+      width: 60px;
+      height: 100px;
+      border: 4px solid #fff;
+      border-radius: 12px;
       position: absolute;
       bottom: 0;
-      background: rgba(255, 255, 224, 0.2);
+      background: linear-gradient(to top, #ffeecc, #fff0f5);
       transform-origin: bottom center;
     }
+
     .mug::after {
       content: "";
       position: absolute;
       bottom: 0;
       width: 100%;
       height: 50%;
-      background-color: #fffacd;
-      border-radius: 0 0 8px 8px;
+      background: linear-gradient(to top, #fffacd, transparent);
+      border-radius: 0 0 12px 12px;
     }
+
     .mug.left {
       left: 0;
-      animation: clinkLeft 2s infinite;
+      animation: clinkLeft 3s infinite ease-in-out;
     }
+
     .mug.right {
       right: 0;
-      animation: clinkRight 2s infinite;
+      animation: clinkRight 3s infinite ease-in-out;
     }
 
     @keyframes clinkLeft {
       0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(-20deg); }
+      25% { transform: rotate(-25deg); }
       50% { transform: rotate(0deg); }
     }
 
     @keyframes clinkRight {
       0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(20deg); }
+      25% { transform: rotate(25deg); }
       50% { transform: rotate(0deg); }
     }
   </style>
 </head>
 <body>
-  <h1>Yes</h1>
+  <canvas id="bgCanvas"></canvas>
+  <h1>No</h1>
   <div class="mugs">
     <div class="mug left"></div>
     <div class="mug right"></div>
   </div>
+
+  <script>
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+
+    let mouse = { x: w / 2, y: h / 2 };
+
+    window.addEventListener("mousemove", e => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    window.addEventListener("resize", () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    });
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.lineWidth = 2;
+
+      let lineCount = 40;
+      let spacing = h / lineCount;
+
+      for (let i = 0; i < lineCount; i++) {
+        let y = i * spacing;
+        ctx.beginPath();
+
+        for (let x = 0; x < w; x += 5) {
+          let dx = x - mouse.x;
+          let dy = y - mouse.y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          let angle = Math.atan2(dy, dx);
+          let effect = Math.sin(dist * 0.01 - Date.now() * 0.003) * 20;
+
+          let offsetY = Math.sin(x * 0.01 + i) * 10;
+          let wave = effect * Math.cos(angle);
+
+          ctx.lineTo(x, y + offsetY + wave);
+        }
+
+        ctx.strokeStyle = `hsl(${i * 10 + Date.now() * 0.05}, 100%, 70%)`;
+        ctx.stroke();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
 </body>
 </html>
